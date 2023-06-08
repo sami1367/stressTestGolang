@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,6 +27,9 @@ func setupRouter() *gin.Engine {
 func safarmarketTest(c *gin.Context) {
 	limit := c.PostForm("limit")
 	intLimit, err := strconv.Atoi(limit)
+	days := c.PostForm("days")
+	intDays, err := strconv.Atoi(days)
+
 	if err != nil {
 		fmt.Println("Error -> ", err)
 	}
@@ -35,17 +39,27 @@ func safarmarketTest(c *gin.Context) {
 	domesticAirports := [3]string{"THR", "MHD", "KIH"}
 	internationalAirports := [3]string{"IKA", "MHD", "ISF"}
 
-	for i := 0; i < intLimit; {
-		for n := 0; n < len(domesticAirports); n++ {
-			i++
-			wg.Add(1)
-			fmt.Println("tt -> ", n, domesticAirports[n])
-			go callApi(i, &wg, "https://api.pateh.com", "THR", "KIH", "2023-06-08")
-		}
-		for m := 0; m < len(internationalAirports); m++ {
-			i++
-			wg.Add(1)
-			fmt.Println("rr -> ", m, internationalAirports[m])
+	currentTime := time.Now()
+
+	for z := 0; z < intDays; z++ {
+		date := currentTime.AddDate(0, 0, z)
+		for i := 0; i < intLimit; {
+			for n := 0; n < len(domesticAirports); n++ {
+				for nn := 0; nn < len(domesticAirports); nn++ {
+					i++
+					wg.Add(1)
+					fmt.Println("tt -> ", n, domesticAirports[n], "->", domesticAirports[nn])
+					go callApi(i, &wg, "https://api.pateh.com", domesticAirports[n], domesticAirports[nn], date.Format("2006-1-2"))
+				}
+			}
+			for m := 0; m < len(internationalAirports); m++ {
+				for mm := 0; mm < len(domesticAirports); mm++ {
+					i++
+					wg.Add(1)
+					fmt.Println("tt -> ", m, internationalAirports[m], "->", internationalAirports[mm])
+					go callApi(i, &wg, "https://api.pateh.com", internationalAirports[m], internationalAirports[mm], date.Format("2006-1-2"))
+				}
+			}
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true})
@@ -54,7 +68,7 @@ func safarmarketTest(c *gin.Context) {
 
 func callApi(i int, wg *sync.WaitGroup, baseUrl string, from string, to string, date string) {
 	defer wg.Done()
-	fmt.Println("test", i)
+	//fmt.Println("test", i)
 	resp, err := http.PostForm(baseUrl+"/api/safar-market-search",
 		url.Values{
 			"from":          []string{from},
@@ -71,6 +85,6 @@ func callApi(i int, wg *sync.WaitGroup, baseUrl string, from string, to string, 
 	//defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	_ = resp
-	//_ = body
-	fmt.Println(string(body))
+	_ = body
+	//fmt.Println(string(body))
 }
