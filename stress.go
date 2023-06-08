@@ -37,24 +37,24 @@ func safarmarketTest(c *gin.Context) {
 
 	wg := sync.WaitGroup{}
 
-	domesticAirports := [3]string{"THR", "MHD", "KIH"}
-	internationalAirports := [3]string{"IKA", "MHD", "ISF"}
+	//domesticAirports := [3]string{"THR", "MHD", "KIH", "IFN"}
+	internationalAirports := [12]string{"THR", "IKA", "IST", "IFN", "NJF", "DXB", "TBS", "BER", "KIH", "MHD", "SXF", "TXL"}
 
 	currentTime := time.Now()
 
 	for z := 0; z < intDays; z++ {
 		date := currentTime.AddDate(0, 0, z)
 		for i := 0; i < intLimit; {
-			for n := 0; n < len(domesticAirports); n++ {
-				for nn := 0; nn < len(domesticAirports); nn++ {
-					i++
-					wg.Add(1)
-					fmt.Println("tt -> ", n, domesticAirports[n], "->", domesticAirports[nn])
-					go callApi(i, &wg, baseUrl, domesticAirports[n], domesticAirports[nn], date.Format("2006-1-2"))
-				}
-			}
+			// for n := 0; n < len(domesticAirports); n++ {
+			// 	for nn := 0; nn < len(domesticAirports); nn++ {
+			// 		i++
+			// 		wg.Add(1)
+			// 		fmt.Println("tt -> ", n, domesticAirports[n], "->", domesticAirports[nn])
+			// 		go callApi(i, &wg, baseUrl, domesticAirports[n], domesticAirports[nn], date.Format("2006-1-2"))
+			// 	}
+			// }
 			for m := 0; m < len(internationalAirports); m++ {
-				for mm := 0; mm < len(domesticAirports); mm++ {
+				for mm := 0; mm < len(internationalAirports); mm++ {
 					i++
 					wg.Add(1)
 					fmt.Println("tt -> ", m, internationalAirports[m], "->", internationalAirports[mm])
