@@ -29,6 +29,7 @@ func safarmarketTest(c *gin.Context) {
 	intLimit, err := strconv.Atoi(limit)
 	days := c.PostForm("days")
 	intDays, err := strconv.Atoi(days)
+	baseUrl := c.PostForm("base-url")
 
 	if err != nil {
 		fmt.Println("Error -> ", err)
@@ -49,7 +50,7 @@ func safarmarketTest(c *gin.Context) {
 					i++
 					wg.Add(1)
 					fmt.Println("tt -> ", n, domesticAirports[n], "->", domesticAirports[nn])
-					go callApi(i, &wg, "https://api.pateh.com", domesticAirports[n], domesticAirports[nn], date.Format("2006-1-2"))
+					go callApi(i, &wg, baseUrl, domesticAirports[n], domesticAirports[nn], date.Format("2006-1-2"))
 				}
 			}
 			for m := 0; m < len(internationalAirports); m++ {
@@ -57,7 +58,7 @@ func safarmarketTest(c *gin.Context) {
 					i++
 					wg.Add(1)
 					fmt.Println("tt -> ", m, internationalAirports[m], "->", internationalAirports[mm])
-					go callApi(i, &wg, "https://api.pateh.com", internationalAirports[m], internationalAirports[mm], date.Format("2006-1-2"))
+					go callApi(i, &wg, baseUrl, internationalAirports[m], internationalAirports[mm], date.Format("2006-1-2"))
 				}
 			}
 		}
